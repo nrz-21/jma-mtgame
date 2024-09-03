@@ -1,21 +1,24 @@
 
--- add group function
+-- add group helper
+
 local function add_groups(item, groups)
 
 	local def = minetest.registered_items[item]
 
-	if not def then return end
+	if def then
 
-	local grp = def.groups
+		local grps = table.copy(def.groups) or {}
 
-	for k, v in pairs(groups) do
-		grp[k] = v
+		for k, v in pairs(groups) do
+			grps[k] = v
+		end
+
+		minetest.override_item(item, {groups = grps})
 	end
-
-	minetest.override_item(item, {groups = grp})
 end
 
 -- default recipe items
+
 farming.recipe_items = {
 
 	-- if utensils are disabled then use blank item
@@ -62,7 +65,8 @@ farming.recipe_items = {
 add_groups("default:apple", {food_apple = 1})
 
 
--- change recipe items to mineclone variations
+-- if mineclone found then change recipe items
+
 if farming.mcl then
 
 	local a = farming.recipe_items
@@ -97,6 +101,8 @@ if farming.mcl then
 	a.stone = "mcl_core:stone"
 	a.glass = "mcl_core:glass"
 
+	-- add missing groups for recipes to work properly
+
 	add_groups("mcl_core:sugar", {food_sugar = 1})
 	add_groups("mcl_throwing:egg", {food_egg = 1})
 	add_groups("mcl_farming:wheat_item", {food_wheat = 1})
@@ -114,8 +120,6 @@ if farming.mcl then
 	add_groups("mcl_mobitems:milk_bucket", {food_milk = 1})
 	add_groups("mcl_ocean:dried_kelp", {food_seaweed = 1})
 	add_groups("mcl_potions:river_water", {food_glass_water = 1})
-
-	-- add missing food groups to current items so recipes work
 	add_groups("mcl_dye:yellow", {food_lemon = 1, food_banana = 1})
 	add_groups("mcl_dye:orange", {food_orange = 1})
 	add_groups("mcl_flowers:sunflower", {food_olive_oil = 1, food_butter = 1})

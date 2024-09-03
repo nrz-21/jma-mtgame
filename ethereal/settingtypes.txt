@@ -38,6 +38,7 @@ ethereal.sakura (Sakura biome, 1 = Enable / 0 = Disable) int 1
 ethereal.tundra (Tundra biome, 1 = Enable / 0 = Disable) int 1
 ethereal.mediterranean (Mediterranean biome, 1 = Enable / 0 = Disable) int 1
 ethereal.logs (Tree log decor, 1 = Enable / 0 = Disable) int 1
+ethereal.wood_rotate (Enable directional placement of wood) bool true
 
 ethereal.flightpotion_duration (Flight Potion Duration) int 300
 
