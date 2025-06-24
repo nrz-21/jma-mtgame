@@ -309,7 +309,10 @@ if pipeworks.enable_deployer then
 			local stack = fakeplayer:get_wielded_item()
 			local def = minetest.registered_items[stack:get_name()]
 			if def and def.on_place then
+				local oldfn = core.is_creative_enabled()
+				core.is_creative_enabled = function(name) return false end
 				local new_stack, placed_pos = def.on_place(stack, fakeplayer, pointed)
+				core.is_creative_enabled = oldfn
 				fakeplayer:set_wielded_item(new_stack or stack)
 				-- minetest.item_place_node doesn't play sound to the placer
 				local sound = placed_pos and def.sounds and def.sounds.place
