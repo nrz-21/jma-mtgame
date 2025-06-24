@@ -26,6 +26,13 @@ local function is_source(name)
 	end
 	return false
 end
+local function flowing_to_source(name)
+	for _, liquid in pairs(pipeworks.liquids) do
+		if name == liquid.flowing then
+			return liquid.source
+		end
+	end
+end
 
 pipeworks.check_for_liquids = function(pos)
 	local coords = {
@@ -37,9 +44,14 @@ pipeworks.check_for_liquids = function(pos)
 		{x=pos.x,y=pos.y,z=pos.z+1},	}
 	for i =1,6 do
 		local name = minetest.get_node(coords[i]).name
-		if is_source(name) or is_flowing(name) then
+		local flowing = is_flowing(name)
+		if is_source(name) or flowing then
 			if finitewater then minetest.remove_node(coords[i]) end
-			return true, name
+			if flowing then
+				return true, flowing_to_source(name)
+			else
+				return true, name
+			end
 		end
 	end
 	return false
@@ -126,14 +138,17 @@ pipeworks.spigot_check = function(pos, node)
 			if spigotname and spigotname == "pipeworks:spigot" then
 				minetest.add_node(pos,{name = "pipeworks:spigot_pouring", param2 = fdir})
 				if finitewater or not is_source(belowname) then
-					minetest.add_node({x=pos.x,y=pos.y-1,z=pos.z},{name = minetest.get_meta(check[fdir+1]):get_string("liquid_name")})
+					local liquid_name = minetest.get_meta(check[fdir+1]):get_string("liquid_name")
+					minetest.add_node({x=pos.x,y=pos.y-1,z=pos.z},{name = liquid_name})
+					minetest.get_meta(pos):set_string("liquid_name", liquid_name)
 				end
 			end
 		else
 			if spigotname == "pipeworks:spigot_pouring" then
 				minetest.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:spigot", param2 = fdir})
-				if belowname == pipeworks.liquids.water.source and not finitewater then
+				if belowname == minetest.get_meta(pos):get_string("liquid_name") and not finitewater then
 					minetest.remove_node({x=pos.x,y=pos.y-1,z=pos.z})
+					minetest.get_meta(pos):set_string("liquid_name", "")
 				end
 			end
 		end
@@ -150,14 +165,17 @@ pipeworks.fountainhead_check = function(pos, node)
 			if fountainhead_name and fountainhead_name == "pipeworks:fountainhead" then
 				minetest.add_node(pos,{name = "pipeworks:fountainhead_pouring"})
 				if finitewater or not is_source(abovename) then
-					minetest.add_node({x=pos.x,y=pos.y+1,z=pos.z},{name = minetest.get_meta(near_node_pos):get_string("liquid_name")})
+					local liquid_name = minetest.get_meta(near_node_pos):get_string("liquid_name")
+					minetest.add_node({x=pos.x,y=pos.y+1,z=pos.z},{name = liquid_name})
+					minetest.get_meta(pos):set_string("liquid_name", liquid_name)
 				end
 			end
 		else
 			if fountainhead_name == "pipeworks:fountainhead_pouring" then
 				minetest.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:fountainhead"})
-				if abovename == pipeworks.liquids.water.source and not finitewater then
+				if abovename == minetest.get_meta(pos):get_string("liquid_name") and not finitewater then
 					minetest.remove_node({x=pos.x,y=pos.y+1,z=pos.z})
+					minetest.get_meta(pos):set_string("liquid_name", "")
 				end
 			end
 		end
