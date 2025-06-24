@@ -145,10 +145,10 @@ pipeworks.spigot_check = function(pos, node)
 			end
 		else
 			if spigotname == "pipeworks:spigot_pouring" then
-				minetest.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:spigot", param2 = fdir})
-				if belowname == minetest.get_meta(pos):get_string("liquid_name") and not finitewater then
+				local liquid_name = minetest.get_meta(pos):get_string("liquid_name")
+				minetest.add_node(pos, {name = "pipeworks:spigot", param2 = fdir})
+				if belowname == liquid_name and not finitewater then
 					minetest.remove_node({x=pos.x,y=pos.y-1,z=pos.z})
-					minetest.get_meta(pos):set_string("liquid_name", "")
 				end
 			end
 		end
@@ -172,10 +172,10 @@ pipeworks.fountainhead_check = function(pos, node)
 			end
 		else
 			if fountainhead_name == "pipeworks:fountainhead_pouring" then
-				minetest.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:fountainhead"})
-				if abovename == minetest.get_meta(pos):get_string("liquid_name") and not finitewater then
+				local liquid_name = minetest.get_meta(pos):get_string("liquid_name")
+				minetest.add_node(pos, {name = "pipeworks:fountainhead"})
+				if abovename == liquid_name and not finitewater then
 					minetest.remove_node({x=pos.x,y=pos.y+1,z=pos.z})
-					minetest.get_meta(pos):set_string("liquid_name", "")
 				end
 			end
 		end
