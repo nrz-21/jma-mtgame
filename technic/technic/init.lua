@@ -9,8 +9,9 @@ end
 local load_start = os.clock()
 
 technic = rawget(_G, "technic") or {}
-technic.creative_mode = minetest.settings:get_bool("creative_mode")
-
+--technic.creative_mode = minetest.settings:get_bool("creative_mode")
+-- Even on creative mode, make machines behave as in survival
+technic.creative_mode = false
 
 local modpath = minetest.get_modpath("technic")
 technic.modpath = modpath
