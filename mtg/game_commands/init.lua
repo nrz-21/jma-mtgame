@@ -1,19 +1,27 @@
 -- game_commands/init.lua
 
 -- Load support for MT game translation.
-local S = minetest.get_translator("game_commands")
-
-
-minetest.register_chatcommand("killme", {
+local S = core.get_translator("game_commands")
+local cooldown = 10
+local last_usage = {}
+core.register_chatcommand("killme", {
 	description = S("Kill yourself to respawn"),
 	func = function(name)
-		local player = minetest.get_player_by_name(name)
+		local player = core.get_player_by_name(name)
 		if player then
-			if minetest.settings:get_bool("enable_damage") then
+			local now = core.get_gametime()
+			local last = last_usage[name] or 0
+			if now - last > cooldown then
+				local remaining = cooldown - (now - last)
+				return false, S("You must wait @1 seconds beofre using this command again.", math.ceil(remaining))
+			end
+			last_usage[name] = now
+				
+			if core.settings:get_bool("enable_damage") then
 				player:set_hp(0)
 				return true
 			else
-				for _, callback in pairs(minetest.registered_on_respawnplayers) do
+				for _, callback in pairs(core.registered_on_respawnplayers) do
 					if callback(player) then
 						return true
 					end
